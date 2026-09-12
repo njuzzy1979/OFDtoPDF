@@ -796,9 +796,15 @@ def main(argv=None):
         dst.parent.mkdir(parents=True, exist_ok=True)
         convert_one(Path(srcs[0]), dst, args.verbose)
     else:
+        # 多输入时若 -o 指向已存在的 .pdf 文件则报错，否则视为输出目录
+        if out and out.suffix.lower() == ".pdf" and out.exists():
+            ap.error(f"多输入时 -o 不能指向 PDF 文件: {out}\n"
+                     f"请指定一个输出目录，或去掉 -o（输出到各文件同目录）")
         outdir = out if out else Path(".")
         if out and out.suffix.lower() == ".pdf":
-            ap.error("多输入时 -o 必须是目录")
+            # 用户显然想把多个文件转成一个带该名的 PDF——给出明确提示而非静默出错
+            print(f"提示: 检测到多个输入且 -o 以 .pdf 结尾，按输出目录处理: {outdir}",
+                  file=sys.stderr)
         outdir.mkdir(parents=True, exist_ok=True)
         ok = 0
         for s in srcs:
