@@ -16,6 +16,11 @@
 pip install pymupdf pillow
 ```
 
+**免安装版（Windows）**：`dist/ofd2pdf.exe` 是 PyInstaller 打包的单文件可执行程序，
+**无需安装 Python 和任何依赖**，拷贝到任意 Windows 电脑双击/命令行即可使用。
+构建方式：在干净虚拟环境中执行
+`pip install pymupdf pillow pyinstaller && pyinstaller --onefile ofd2pdf.py`。
+
 **全新电脑部署清单**：
 
 1. 安装 Python 3.10+ 与上述两个包即可运行；
