@@ -9,7 +9,6 @@ check_*.png
 # Python
 __pycache__/
 *.pyc
-dist/
 build/
 *.spec
 .venv-build/
