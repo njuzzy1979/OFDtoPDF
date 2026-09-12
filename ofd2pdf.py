@@ -53,12 +53,26 @@ MM2PT = 72.0 / 25.4  # OFD 坐标单位是毫米，PDF 是点
 
 
 def find_cjk_font():
-    """探测可用的中文等宽友好字体文件，返回 (别名, 文件路径或 None)"""
+    """探测可用的中文等宽友好字体文件，返回 (别名, 文件路径或 None)
+
+    依次扫描多个常见系统字体目录（Windows / macOS / Linux），
+    优先选择 ASCII 字符为 0.5em 等宽的宋体类字体。
+    """
     candidates = [
-        ("SimSun", r"C:\Windows\Fonts\simsun.ttc"),
-        ("SimSun", r"C:\Windows\Fonts\simsun.ttc.ttf"),
-        ("MSYaHei", r"C:\Windows\Fonts\msyh.ttc"),
-        ("SimHei", r"C:\Windows\Fonts\simhei.ttf"),
+        # Windows
+        ("SimSun", "C:/Windows/Fonts/simsun.ttc"),
+        ("SimSun", "C:/Windows/Fonts/simsun.ttc.ttf"),
+        ("MSYaHei", "C:/Windows/Fonts/msyh.ttc"),
+        ("SimHei", "C:/Windows/Fonts/simhei.ttf"),
+        # macOS
+        ("SimSun", "/System/Library/Fonts/Supplemental/Songti.ttc"),
+        ("MSYaHei", "/System/Library/Fonts/Supplemental/Arial Unicode.ttf"),
+        ("SimHei", "/System/Library/Fonts/STHeiti Light.ttc"),
+        # Linux（常见发行版的宋体/黑体包）
+        ("SimSun", "/usr/share/fonts/truetype/arphic/uming.ttc"),
+        ("SimHei", "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"),
+        ("MSYaHei", "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"),
+        ("SimHei", "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
     ]
     for alias, path in candidates:
         if Path(path).exists():
@@ -69,6 +83,11 @@ def find_cjk_font():
 FONT_ALIAS, FONT_FILE = find_cjk_font()
 # 找不到本机字体文件时退回 PyMuPDF 内置 CJK 字体（不嵌入，宽度略有偏差）
 FONT_FALLBACK = "china-s"
+if FONT_FILE is None:
+    # 明确提示退化影响，而非静默产生可能重叠的输出
+    print("警告: 未找到本机中文字体文件，将使用内置 CJK 字体渲染文本。"
+          "数字宽度可能与 OFD 版式有偏差，请在 Adobe 中检查是否重叠。",
+          file=sys.stderr)
 
 # 路径命令：每个命令后跟的数值个数（B 与 C 均为三次贝塞尔）
 PATH_CMD_ARITY = {"M": 2, "L": 2, "C": 6, "B": 6, "S": 4}

@@ -16,6 +16,15 @@
 pip install pymupdf pillow
 ```
 
+**全新电脑部署清单**：
+
+1. 安装 Python 3.10+ 与上述两个包即可运行；
+2. 中文字体：程序自动扫描 Windows / macOS / Linux 常见字体目录（宋体类优先）。
+   Windows 自带中易宋体，开箱即用；裸 Linux 需安装任一 CJK 字体包
+   （如 `fonts-arphic-uming`、`fonts-wqy-zenhei`、`fonts-noto-cjk`）；
+3. 若无任何本机字体文件，程序自动退回 PyMuPDF 内置 CJK 字体并给出警告，
+   此时字体不嵌入 PDF，数字宽度可能与 OFD 版式有偏差（重叠风险）。
+
 ## 用法
 
 ```bash
